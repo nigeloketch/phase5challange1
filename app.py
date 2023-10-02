@@ -1,8 +1,9 @@
 # Import necessary modules and classes from Flask and related extensions.
 from flask import Flask, jsonify, request
 from flask_migrate import Migrate
-from models import db, Restaurant_Pizza, Pizza, Restaurant
+from models import *
 from flask_restful import Api, Resource
+
 
 # Create a Flask application instance.
 app = Flask(__name__)
@@ -23,21 +24,21 @@ api = Api(app)
 # Define a route to get all restaurants.
 class GetRestaurant(Resource):
     def get(self):
-        # Query all restaurants from the database.
-        restaurants = Restaurant.query.all()
-        restaurant_list = []
+        #  Query all restaurants from the database.
+         restaurants = Restaurant.query.all()
+         restaurant_list = []
 
         # Create a list of restaurant data.
-        for res in restaurants:
-            res_data = {
-                "id": res.id,
-                "name": res.name,
-                "address": res.address
-            }
-            restaurant_list.append(res_data)
+         for res in restaurants:
+             res_data = {
+                 "id": res.id,
+                 "name": res.restName,
+                 "address": res.address
+             }
+             restaurant_list.append(res_data)
 
-        # Return the list of restaurants as JSON.
-        return jsonify(restaurant_list)
+    #   Return the list of restaurants as JSON.
+         return jsonify(restaurant_list)
 
 # Add the GetRestaurant resource to the API and define its route.
 api.add_resource(GetRestaurant, "/restaurants")
@@ -66,7 +67,7 @@ class GetRestaurantbyID(Resource):
         return "{}"
 
 # Define a resource to get all pizzas.
-class Pizza(Resource):
+class PizzaRoute(Resource):
     def get(self):
         # Query all pizzas from the database.
         list_of_pizzas = Pizza.query.all()
@@ -86,15 +87,16 @@ class Pizza(Resource):
         return jsonify(pizza_list)
 
 # Add the Pizza resource to the API and define its route.
-api.add_resource(Pizza, "/pizzas")
+api.add_resource(PizzaRoute, "/pizzas")
 
 # Define a resource to associate a pizza with a restaurant.
 class RestaurantPizza(Resource):
     def post(self):
         # Create a new RestaurantPizza object based on the request data.
-        new_RestaurantPizza = RestaurantPizza(
-            restaurant_id=request.form.get("restaurant_id"),
-            pizza_id=request.form.get("pizza_id")
+        new_RestaurantPizza = Restaurant_Pizza(
+            restaurant_id= request.form.get("restaurant_id"),
+            pizza_id=request.form.get("pizza_id"),
+            price = request.form.get("price")
         )
 
         # Add the new RestaurantPizza object to the database.
